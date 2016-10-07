@@ -1,9 +1,18 @@
+const path = require('path');
+
+var ExtractTextPlugin = require ('extract-text-webpack-plugin');
+
 module.exports = {
-  entry: "./home",
+  context: path.join(__dirname, 'frontend'),
+
+  entry: {
+    main: "./main.jsx"
+  },
 
   output: {
-    filename: "build.js",
-    library: "home"
+    path: path.join(__dirname, 'public'),
+    filename: "[name].js",
+    publicPath: "/public/"
   },
 
   watch: true,
@@ -16,11 +25,18 @@ module.exports = {
 
   module: {
     loaders: [{
-      test: /\.jsx?$/,
+      test: /\.jsx$/,
       exclude: /node_modules/,
-      loader: 
-        'babel?presets[]=react,presets[]=es2015,presets[]=stage-0'
-      
-    }]
-  }
+      loader: 'babel?presets[]=react,presets[]=es2015,presets[]=stage-0'
+
+    },  {
+            test: /\.css$/,
+            loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+            
+        },
+    ]}, 
+
+    plugins: [
+        new ExtractTextPlugin("style.css")
+    ]
 }
