@@ -60,13 +60,16 @@
 	
 	var my_news = [{
 	  author: 'Саша Печкин',
-	  text: 'В четверг, четвертого числа...'
+	  text: 'В четчерг, четвертого числа...',
+	  bigText: 'в четыре с четвертью часа четыре чёрненьких чумазеньких чертёнка чертили чёрными чернилами чертёж.'
 	}, {
 	  author: 'Просто Вася',
-	  text: 'Считаю, что $ должен стоить 35 рублей!'
+	  text: 'Считаю, что $ должен стоить 35 рублей!',
+	  bigText: 'А евро 42!'
 	}, {
 	  author: 'Гость',
-	  text: 'Бесплатно. Скачать. Лучший сайт - http://localhost:3000'
+	  text: 'Бесплатно. Скачать. Лучший сайт - http://localhost:3000',
+	  bigText: 'На самом деле платно, просто нужно прочитать очень длинное лицензионное соглашение'
 	}];
 	
 	var Comments = _react2.default.createClass({
@@ -81,14 +84,128 @@
 	  }
 	});
 	
+	var Article = _react2.default.createClass({
+	  displayName: "Article",
+	
+	  propTypes: {
+	    data: _react2.default.PropTypes.shape({
+	      author: _react2.default.PropTypes.string.isRequired,
+	      text: _react2.default.PropTypes.string.isRequired,
+	      bigText: _react2.default.PropTypes.string.isRequired
+	    })
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      visible: false
+	    };
+	  },
+	
+	  readmoreClick: function readmoreClick(e) {
+	    e.preventDefault();
+	    this.setState({ visible: true });
+	  },
+	
+	  render: function render() {
+	    var author = this.props.data.author,
+	        text = this.props.data.text,
+	        bigText = this.props.data.bigText,
+	        visible = this.state.visible;
+	
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "article" },
+	      _react2.default.createElement(
+	        "p",
+	        { className: "newsAuthor" },
+	        author,
+	        ":"
+	      ),
+	      _react2.default.createElement(
+	        "p",
+	        { className: "newsText" },
+	        text
+	      ),
+	      _react2.default.createElement(
+	        "a",
+	        { href: "#",
+	          onClick: this.readmoreClick,
+	          className: 'newsRreadMore ' + (visible ? 'none' : '') },
+	        "\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u0435\u0435"
+	      ),
+	      _react2.default.createElement(
+	        "p",
+	        { className: 'newsBigText ' + (visible ? '' : 'none') },
+	        bigText
+	      )
+	    );
+	  }
+	});
+	
 	var News = _react2.default.createClass({
 	  displayName: "News",
+	
+	  propTypes: {
+	    news: _react2.default.PropTypes.array.isRequired
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      counter: 0
+	    };
+	  },
+	
+	  newsCountClick: function newsCountClick(e) {
+	    this.setState({
+	      counter: ++this.state.counter
+	    });
+	  },
+	
+	  render: function render() {
+	    var data = this.props.news,
+	        counter = this.state.counter,
+	        newsTemplate;
+	
+	    if (data.length > 0) {
+	      newsTemplate = data.map(function (item, index) {
+	        return _react2.default.createElement(
+	          "div",
+	          { key: index },
+	          _react2.default.createElement(Article, { data: item })
+	        );
+	      });
+	    } else {
+	      newsTemplate = _react2.default.createElement(
+	        "p",
+	        null,
+	        "\u041A \u0441\u043E\u0436\u0430\u043B\u0435\u043D\u0438\u044E \u043D\u043E\u0432\u043E\u0441\u0442\u0435\u0439 \u043D\u0435\u0442"
+	      );
+	    }
+	
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "news" },
+	      newsTemplate,
+	      _react2.default.createElement(
+	        "strong",
+	        {
+	          onClick: this.newsCountClick,
+	          className: 'newsCount' + (data.length > 0 ? '' : 'none') },
+	        "\u0412\u0441\u0435\u0433\u043E \u043D\u043E\u0432\u043E\u0441\u0442\u0435\u0439: ",
+	        counter
+	      )
+	    );
+	  }
+	});
+	
+	var Hello = _react2.default.createClass({
+	  displayName: "Hello",
 	
 	  render: function render() {
 	    return _react2.default.createElement(
 	      "div",
-	      { className: "news" },
-	      "\u041A \u0441\u043E\u0436\u0430\u043B\u0435\u043D\u0438\u044E, \u043D\u043E\u0432\u043E\u0441\u0442\u0435\u0439 \u043D\u0435\u0442."
+	      { className: "hello" },
+	      "\u0417\u0410\u0414\u0410\u0420\u041E\u041E\u041E\u041E\u0412\u0410\u0410\u0410!!! =)"
 	    );
 	  }
 	});
@@ -99,10 +216,9 @@
 	  render: function render() {
 	    return _react2.default.createElement(
 	      "div",
-	      null,
-	      "\u0412\u0441\u0435\u043C \u043F\u0440\u0438\u0432\u0435\u0442, \u044F \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 App!",
-	      _react2.default.createElement(News, { data: my_news }),
-	      " ",
+	      { className: "app" },
+	      _react2.default.createElement(Hello, null),
+	      _react2.default.createElement(News, { news: my_news }),
 	      _react2.default.createElement(Comments, null)
 	    );
 	  }
