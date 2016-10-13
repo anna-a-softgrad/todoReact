@@ -2,149 +2,75 @@ import React from "react";
 import ReactDOM from 'react-dom';
 import {Component} from "react";
 
+import List from './list.jsx';
+import Filter from './filter.jsx';
+
 import './style.css';
 
-var my_news = [
-  {
-    author: 'Саша Печкин',
-    text: 'В четчерг, четвертого числа...',
-    bigText: 'в четыре с четвертью часа четыре чёрненьких чумазеньких чертёнка чертили чёрными чернилами чертёж.'
-  },
-  {
-    author: 'Просто Вася',
-    text: 'Считаю, что $ должен стоить 35 рублей!',
-    bigText: 'А евро 42!'
-  },
-  {
-    author: 'Гость',
-    text: 'Бесплатно. Скачать. Лучший сайт - http://localhost:3000',
-    bigText: 'На самом деле платно, просто нужно прочитать очень длинное лицензионное соглашение'
-  }
-];
+class MainWindow extends Component {
+	constructor(props) {
+		super(props);
+		this.onAdd = this.onAdd.bind(this);
+		this.filters = [
+	        {text: "All", value: 0},
+	        {text: "Active", value: 1},
+	        {text: "Completed", value: -1}
+      	];
+      	this.state = {
+	        filter: 0
+      };
+  	}
+	
+	onAdd(evt) {
+	  if (evt.keyCode != 13) {
+        return;
+      }
+	  var list = ReactDOM.findDOMNode(this.refs.list).value;
+	  alert(list);
+  	}
 
-let Comments = React.createClass({
-	render: function() {
-		return (
-			<div className="comments">
-				Комментировать нечего :)
-			</div>
-		)
+	componentDidMount() {
+    /* Слушай событие "Создана новость"
+      если событие произошло, обнови this.state.news
+    */
+  	}
+	componentWillUnmount() {
+	  /* Больше не слушай событие "Создана новость" */
 	}
-})
 
-let Article = React.createClass({
-	propTypes: {
-		data: React.PropTypes.shape({
-			author: React.PropTypes.string.isRequired,
-			text: React.PropTypes.string.isRequired,
-			bigText: React.PropTypes.string.isRequired
-		})
-	},
-
-	getInitialState: function() {
-	    return {
-	    	visible: false
-	    };
-  	},
-
-  	readmoreClick: function(e) {
-	    e.preventDefault();
-	    this.setState({visible: true});
-  	},
-
-	render: function() {
-    	var author = this.props.data.author,
-        	text = this.props.data.text,
-        	bigText = this.props.data.bigText,
- 			visible = this.state.visible;
-
-	    return (
-    		<div className="article">
-        		<p className="newsAuthor">{author}:</p>
-        		<p className="newsText">{text}</p>
-        		<a href="#" 
-        			onClick={this.readmoreClick} 
-        			className={'newsRreadMore ' + (visible ? 'none' : '')}>
-        			Подробнее
-        		</a>
-        		<p className={'newsBigText ' + (visible ? '' : 'none')}>
-        			{bigText}
-        		</p>
-      		</div>
+  	render() {
+  		var activeItems = 0;
+  		var filters = this.filters.map(function(elem, index) {
+          return <Filter key={index} text={elem.text} value={elem.value} onFilterChange={this.onChangeFilter}
+          currentFilter={this.state.filter}/>;
+        }.bind(this));
+    	
+    	return (
+	      	<div className='wrapper'>
+	      		<div className='main-header flex-block'>
+            		<input 
+            			className='todo-list__input' 
+            			type='text' 
+            			id='usertext' 
+            			ref='list'
+            			onKeyUp={this.onAdd}
+            			placeholder="What needs to be done?"/>
+            		<input type="checkbox" name="checkAllItems" className="changeStateItem"/>
+          		</div>
+	        	<List />          
+	        	<div className='footer'>
+	        		<label>{activeItems} items left</label>
+            		<div className='filters'>
+            			{filters}
+            		</div>
+            		<button>Clear completed</button>
+          		</div>
+	      	</div>
     	)
   	}
-});
-
-let News = React.createClass({
-	propTypes: {
-    	news: React.PropTypes.array.isRequired
-  	},
-  	
-  	getInitialState: function() {
-	    return {
-	    	counter: 0
-	    };
-  	},
-
-  	newsCountClick: function(e) {
-  		this.setState({
-  			counter: ++this.state.counter
-  		})
-  	},
-
-  	render: function() {
-	  	var data = this.props.news,
-	  		counter = this.state.counter,
-	    	newsTemplate; 
-
-	    if(data.length > 0) {
-		    newsTemplate = data.map(function(item, index) {
-		  		return (
-		  			<div key={index}>
-						<Article data={item} />
-					</div>
-		  		)
-			})
-		} else {
-			newsTemplate = <p>К сожалению новостей нет</p>
-		}
-
-		return (
-			<div className="news">
-				{newsTemplate}
-				<strong 
-					onClick={this.newsCountClick} 
-					className={'newsCount' + (data.length > 0 ? '':'none')}>
-					Всего новостей: {counter}
-				</strong>
-			</div>
-		)
-  	}
-});
-
-let Hello = React.createClass({
-	render: function() {
-		return (
-			<div className="hello">
-				ЗАДАРООООВААА!!! =)
-			</div>
-		)
-	}
-})
-
-let App = React.createClass({
-  render: function() {
-    return (
-      <div className="app">
-        <Hello />
-    	<News news={my_news} />
-        <Comments />
-      </div>
-    )
-  }
-});
+};
 
 ReactDOM.render(
-  <App />,
+  <MainWindow />,
   document.getElementById('root')
 );

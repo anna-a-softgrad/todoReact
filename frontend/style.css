@@ -1,30 +1,174 @@
-.none {
-  display: none !important;
+html, body {
+  height: 100%;
+  background-color: #f4f4f4;
+}
+.wrapper {  
+  position: relative;
+  margin: 10px 40px;
+  background-color: white;
+}
+.header{
+  text-align: center;
+  font-size: 100px;
+  height: 20%;  
+  color: #e6d5d6;
+  margin: 10px 40px;
+}
+.todo-list__input {
+    flex-grow: 1;
+
+    text-align: left;
+    border: none;
+    outline: none;
+}
+.flex-block{
+    display: flex;
+    justify-content: center;
+}
+.flex-block * {
+    align-self: center;
+}
+.main-header {  
+  text-align: left;
+  padding: 20px;
+  font-size: 40px;
+  color: lightgrey;
+    border-bottom: 1px solid lightgrey;
+}
+#addItem {
+  float: right;
+  padding-right: 10px;
+}
+.taskIsDone {
+  display: none;
+}
+.textIsDone input{
+  text-decoration: line-through;
+  color: lightgrey;
 }
 
-body {
-  background: rgba(0, 102, 255, 0.38);
-  font-family: sans-serif;
+.changeStateItem {
+  width: 40px;
+    height: 40px;
+  border-radius: 20px;
+}
+.checkedShowing {
+  border: 1px solid lightgrey;
+}
+.itemText{
+  border: none;
+  width:100%;
+  font-size: 20px;
+  padding: 10px 10px;
+}
+.event{
+  cursor: pointer;  
+}
+#main-table {
+  width: 100%;
+  font-size: 24px;
+  margin-bottom: 50px;
+  padding: 10px 0;
+}
+#main-table thead th:nth-child(1), th:nth-child(3), td:nth-child(1), td:nth-child(3) {
+  width: 10%;
+  text-align: center;
+  font-weight: normal;
+}
+#main-table thead th:nth-child(2), td:nth-child(2) {
+  width: 80%;
+  text-align: left;
+  font-weight: normal;
+}
+.footer {
+  display: flex;
+  left: 0;
+  bottom: 0;
+  font-size: 20px;
+  border-top: 1px solid lightgrey;
+  min-height: 50px;
+  padding: 20px;
+  justify-content: space-between;
+}
+.menu-item div {
+  display: inline-block;  
+  width: 15%;
+  color: grey;
+}
+.filters label {
+    float: left;
+    margin: 4px;
+
+    border-radius: 4px;
+    border: 1px solid transparent;
+    overflow: auto;
+}
+.filters label span {
+    display: block;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
 }
 
-p {
-  margin: 0 0 5px;
+.filters input:checked + span {
+    border: 1px solid #EFD5D5;
+}
+.filters label input[type="radio"] {
+    display: none;
+}
+input[type=text],
+select,
+textarea {
+    display: block;
+    height: 30px;
+    box-sizing: border-box;
+    padding: 20px;
+
+    line-height: 2;
+    font-size: 22px;
+    text-align: center;
+
+    color: #4D4D4D;
+    outline: none;
+}
+.item-container {
+    display: block;
+    border-top: 2px solid #ededed;
+}
+.todo-list__item {
+    padding: 10px;
+
+    border-bottom: 1px solid #ededed;
 }
 
-.article {
-  background: #FFF;
-  border: 1px solid rgba(0, 89, 181, 0.82);
-  width: 600px;
-  margin: 0 0 5px;
-  box-shadow: 2px 2px 5px -1px rgb(0, 81, 202);
-  padding: 3px 5px;
+.todo-list__item:hover{
+    -webkit-box-shadow: inset 0px 0px 20px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow:    inset 0px 0px 20px 2px rgba(0, 0, 0, 0.2);
+    box-shadow:         inset 0px 0px 20px 2px rgba(0, 0, 0, 0.2);
 }
 
-.newsAuthor {
-  text-decoration: underline;
-  color: #007DDC;
+.todo-list__item .item-text {
+    flex-grow: 2;
+    align-self: stretch;
+
+    white-space: pre-line;
+    word-break: break-all;
+    line-height: 1.5;
+    text-align: left;
+    font-size: 22px;
+    color: #4D4D4D;
+
+    transition: color 0.4s;
+    cursor: pointer;
 }
-.newsCount {
-  margin: 10px 0 10px 0;
-  display: block;
+.todo-list__item.ready label {
+    color: #d9d9d9;
+    text-decoration: line-through;
+}
+.todo-list__item button {
+  flex-basis: 100px;
+}
+.todo-list__item input[type=checkbox] {
+  flex-basis: 30px;
+    margin: 10px;
 }
