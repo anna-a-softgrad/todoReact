@@ -60,6 +60,10 @@
 	
 	var _list2 = _interopRequireDefault(_list);
 	
+	var _item = __webpack_require__(173);
+	
+	var _item2 = _interopRequireDefault(_item);
+	
 	var _filter = __webpack_require__(174);
 	
 	var _filter2 = _interopRequireDefault(_filter);
@@ -83,6 +87,7 @@
 	    var _this = _possibleConstructorReturn(this, (MainWindow.__proto__ || Object.getPrototypeOf(MainWindow)).call(this, props));
 	
 	    _this.onAdd = _this.onAdd.bind(_this);
+	
 	    _this.filters = [{ text: "All", value: 0 }, { text: "Active", value: 1 }, { text: "Completed", value: -1 }];
 	    _this.state = {
 	      filter: 0
@@ -96,20 +101,27 @@
 	      if (evt.keyCode != 13) {
 	        return;
 	      }
-	      var list = _reactDom2.default.findDOMNode(this.refs.list).value;
-	      alert(list);
+	      // add to List
+	      var dict = { text: evt.target.value, readiness: false };
+	      evt.target.value = '';
+	
+	      _reactDom2.default.render(_react2.default.createElement(
+	        "div",
+	        { key: 5 },
+	        _react2.default.createElement(_item2.default, { key: 5, data: dict, index: 5 })
+	      ), document.getElementById('beforeFirstItem'));
+	
+	      //painting
 	    }
 	  }, {
-	    key: "componentDidMount",
-	    value: function componentDidMount() {
-	      /* Слушай событие "Создана новость"
-	        если событие произошло, обнови this.state.news
-	      */
-	    }
-	  }, {
-	    key: "componentWillUnmount",
-	    value: function componentWillUnmount() {
-	      /* Больше не слушай событие "Создана новость" */
+	    key: "addItemMethod",
+	    value: function addItemMethod(dict) {
+	      //     
+	      _reactDom2.default.render(_react2.default.createElement(
+	        "div",
+	        { key: 5 },
+	        _react2.default.createElement(_item2.default, { key: 5, data: dict, index: 5 })
+	      ), document.getElementById('beforeFirstItem'));
 	    }
 	  }, {
 	    key: "render",
@@ -135,7 +147,7 @@
 	            placeholder: "What needs to be done?" }),
 	          _react2.default.createElement("input", { type: "checkbox", name: "checkAllItems", className: "changeStateItem" })
 	        ),
-	        _react2.default.createElement(_list2.default, null),
+	        _react2.default.createElement(_list2.default, { addItemMethod: this.addItemMethod }),
 	        _react2.default.createElement(
 	          "div",
 	          { className: "footer" },
@@ -21562,21 +21574,48 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var todoList = [{ text: '1', readiness: false }, { text: '2', readiness: false }, { text: '3', readiness: false }, { text: '4', readiness: false }];
+	
 	var List = function (_Component) {
 	  _inherits(List, _Component);
 	
-	  function List() {
+	  function List(props) {
 	    _classCallCheck(this, List);
 	
-	    return _possibleConstructorReturn(this, (List.__proto__ || Object.getPrototypeOf(List)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (List.__proto__ || Object.getPrototypeOf(List)).call(this, props));
+	
+	    _this.listInfo = todoList;
+	    return _this;
 	  }
 	
 	  _createClass(List, [{
+	    key: "addItemMethod",
+	    value: function addItemMethod(dict) {
+	      this.listInfo.unshift(dict);
+	    }
+	  }, {
 	    key: "render",
 	    value: function render() {
-	      return _react2.default.createElement("div", {
-	        className: "item-container"
+	      var listTemplate;
+	      //changeItemMethod = this.state.changeItemMethod;
+	
+	      listTemplate = this.listInfo.map(function (item, index) {
+	        return _react2.default.createElement(
+	          "div",
+	          { key: index },
+	          _react2.default.createElement(_item2.default, { key: index, data: item, index: index })
+	        );
 	      });
+	
+	      return _react2.default.createElement(
+	        "div",
+	        { className: "item-container" },
+	        _react2.default.createElement(
+	          "div",
+	          { id: "beforeFirstItem" },
+	          listTemplate
+	        )
+	      );
 	    }
 	  }]);
 	
@@ -21616,37 +21655,45 @@
 	var Item = function (_Component) {
 	  _inherits(Item, _Component);
 	
-	  function Item() {
+	  function Item(props) {
 	    _classCallCheck(this, Item);
 	
-	    return _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, props));
+	
+	    _this.state = {
+	      readiness: _this.props.readiness
+	    };
+	    return _this;
 	  }
 	
 	  _createClass(Item, [{
 	    key: "render",
 	    value: function render() {
+	      var text = this.props.data.text,
+	          readiness = this.props.data.readiness;
+	      var itemID = 'checkbox-' + this.props.index;
+	
 	      var className = 'todo-list__item flex-block';
-	      var readiness = this.props.elem.readiness;
+	
 	      if (readiness) {
 	        className += ' ready ';
 	      }
-	      var todoItemUser = userListStore.getUserByKey(this.props.elem.user);
 	
 	      return _react2.default.createElement(
 	        "div",
-	        { className: className, ref: "item", id: this.props.index },
-	        _react2.default.createElement("input", { type: "checkbox", onChange: this.onChangeReadiness, checked: readiness, id: 'checkbox-' + this.props.index }),
+	        { className: className, id: this.props.index },
+	        _react2.default.createElement("input", { className: "changeStateItem", type: "checkbox", checked: readiness, id: itemID }),
 	        _react2.default.createElement(
 	          "label",
-	          { htmlFor: 'checkbox-' + this.props.index },
+	          { htmlFor: itemID },
 	          _react2.default.createElement("span", null)
 	        ),
+	        _react2.default.createElement("input", { className: "itemText", placeholder: text }),
 	        _react2.default.createElement(
-	          "label",
-	          { className: "item-text", onClick: this.props.onItemClicked },
-	          this.props.elem.text
-	        ),
-	        _react2.default.createElement("span", { className: "delete-btn", onClick: this.deleteItem })
+	          "span",
+	          { className: "delete-btn" },
+	          "X"
+	        )
 	      );
 	    }
 	  }]);

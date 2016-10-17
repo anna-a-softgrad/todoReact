@@ -49,7 +49,8 @@ html, body {
 
 .changeStateItem {
   width: 40px;
-    height: 40px;
+  height: 40px;
+  cursor: pointer;
   border-radius: 20px;
 }
 .checkedShowing {
@@ -60,6 +61,13 @@ html, body {
   width:100%;
   font-size: 20px;
   padding: 10px 10px;
+}
+.delete-btn {
+    width: 24px;
+    height: 24px;
+    margin: 10px 20px;
+    flex-basis: 24px;
+    cursor: pointer;    
 }
 .event{
   cursor: pointer;  
@@ -137,7 +145,6 @@ textarea {
 }
 .todo-list__item {
     padding: 10px;
-
     border-bottom: 1px solid #ededed;
 }
 
@@ -157,7 +164,7 @@ textarea {
     text-align: left;
     font-size: 22px;
     color: #4D4D4D;
-
+    border: none;
     transition: color 0.4s;
     cursor: pointer;
 }
