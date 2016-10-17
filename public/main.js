@@ -86,12 +86,24 @@
 	
 	    var _this = _possibleConstructorReturn(this, (MainWindow.__proto__ || Object.getPrototypeOf(MainWindow)).call(this, props));
 	
+	    _this.deleteCompleted = _this.deleteCompleted.bind(_this);
+	    _this.onChildChanged = _this.onChildChanged.bind(_this);
+	    _this.dispatchChangeEvent = _this.dispatchChangeEvent.bind(_this);
+	    _this.onChangeFilter = _this.onChangeFilter.bind(_this);
+	    _this.readyAll = _this.readyAll.bind(_this);
+	
+	    _this.state = {
+	      listInfo: [],
+	      readyAll: false,
+	      filter: 0,
+	      activeItems: 0
+	    };
+	
+	    _this.list = [{ text: '1', readiness: false }, { text: '2', readiness: false }, { text: '3', readiness: false }, { text: '4', readiness: false }];
+	
 	    _this.onAdd = _this.onAdd.bind(_this);
 	
 	    _this.filters = [{ text: "All", value: 0 }, { text: "Active", value: 1 }, { text: "Completed", value: -1 }];
-	    _this.state = {
-	      filter: 0
-	    };
 	    return _this;
 	  }
 	
@@ -104,32 +116,97 @@
 	      // add to List
 	      var dict = { text: evt.target.value, readiness: false };
 	      evt.target.value = '';
+	      this.list.unshift(dict);
 	
-	      _reactDom2.default.render(_react2.default.createElement(
-	        "div",
-	        { key: 5 },
-	        _react2.default.createElement(_item2.default, { key: 5, data: dict, index: 5 })
-	      ), document.getElementById('beforeFirstItem'));
-	
-	      //painting
+	      this.dispatchChangeEvent();
 	    }
 	  }, {
-	    key: "addItemMethod",
-	    value: function addItemMethod(dict) {
-	      //     
-	      _reactDom2.default.render(_react2.default.createElement(
-	        "div",
-	        { key: 5 },
-	        _react2.default.createElement(_item2.default, { key: 5, data: dict, index: 5 })
-	      ), document.getElementById('beforeFirstItem'));
+	    key: "readyAll",
+	    value: function readyAll(evt) {
+	      for (var i = 0; i < this.list.length; i++) {
+	        this.list[i].readiness = !this.state.readyAll;
+	      }
+	      this.readynessChange(!this.state.readyAll);
+	      this.dispatchChangeEvent();
+	    }
+	  }, {
+	    key: "readynessChange",
+	    value: function readynessChange(readyAll) {
+	      this.setState({
+	        readyAll: readyAll
+	      });
+	    }
+	  }, {
+	    key: "onChildChanged",
+	    value: function onChildChanged(event, id, prop) {
+	      switch (event) {
+	        case 'delete':
+	          this.list.splice(id, 1);
+	          break;
+	        case 'edit':
+	          this.list[id][prop.property] = prop.value;
+	          break;
+	        default:
+	          return;
+	      }
+	      this.dispatchChangeEvent();
+	    }
+	  }, {
+	    key: "deleteCompleted",
+	    value: function deleteCompleted() {
+	      for (var i = 0; i < this.list.length; i++) {
+	        if (this.list[i].readiness) {
+	          this.list.splice(i, 1);
+	          i--;
+	        }
+	      }
+	      this.dispatchChangeEvent();
+	    }
+	  }, {
+	    key: "onChangeFilter",
+	    value: function onChangeFilter(evt) {
+	      this.setState({
+	        filter: evt.target.value,
+	        listInfo: this.list
+	      });
+	    }
+	  }, {
+	    key: "dispatchChangeEvent",
+	    value: function dispatchChangeEvent() {
+	      this.setState({
+	        listInfo: this.list
+	      });
 	    }
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var activeItems = 0;
+	      var activeItems = 0,
+	          listInfo = this.list;
+	
+	      for (var i = 0; i < listInfo.length; i++) {
+	        if (this.state.readyAll == true) {
+	          listInfo[i].readiness = true;
+	        }
+	
+	        if (listInfo[i].readiness == false) {
+	          activeItems++;
+	        }
+	      }
+	
 	      var filters = this.filters.map(function (elem, index) {
-	        return _react2.default.createElement(_filter2.default, { key: index, text: elem.text, value: elem.value, onFilterChange: this.onChangeFilter,
+	        return _react2.default.createElement(_filter2.default, { key: index, text: elem.text, value: elem.value,
+	          onFilterChange: this.onChangeFilter,
 	          currentFilter: this.state.filter });
+	      }.bind(this));
+	
+	      var listTemplate = listInfo.map(function (item, index) {
+	        if (this.state.filter < 0 && !item.readiness || this.state.filter > 0 && item.readiness) return;
+	
+	        return _react2.default.createElement(
+	          "div",
+	          { key: index },
+	          _react2.default.createElement(_item2.default, { key: index, onItemChanged: this.onChildChanged, data: item, index: index })
+	        );
 	      }.bind(this));
 	
 	      return _react2.default.createElement(
@@ -138,16 +215,20 @@
 	        _react2.default.createElement(
 	          "div",
 	          { className: "main-header flex-block" },
+	          _react2.default.createElement("input", { type: "checkbox", className: "changeStateItem", onClick: this.readyAll }),
 	          _react2.default.createElement("input", {
 	            className: "todo-list__input",
 	            type: "text",
 	            id: "usertext",
 	            ref: "list",
 	            onKeyUp: this.onAdd,
-	            placeholder: "What needs to be done?" }),
-	          _react2.default.createElement("input", { type: "checkbox", name: "checkAllItems", className: "changeStateItem" })
+	            placeholder: "What needs to be done?" })
 	        ),
-	        _react2.default.createElement(_list2.default, { addItemMethod: this.addItemMethod }),
+	        _react2.default.createElement(
+	          _list2.default,
+	          null,
+	          listTemplate
+	        ),
 	        _react2.default.createElement(
 	          "div",
 	          { className: "footer" },
@@ -164,7 +245,7 @@
 	          ),
 	          _react2.default.createElement(
 	            "button",
-	            null,
+	            { onClick: this.deleteCompleted },
 	            "Clear completed"
 	          )
 	        )
@@ -21562,10 +21643,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _item = __webpack_require__(173);
-	
-	var _item2 = _interopRequireDefault(_item);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21574,47 +21651,23 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var todoList = [{ text: '1', readiness: false }, { text: '2', readiness: false }, { text: '3', readiness: false }, { text: '4', readiness: false }];
-	
 	var List = function (_Component) {
 	  _inherits(List, _Component);
 	
 	  function List(props) {
 	    _classCallCheck(this, List);
 	
-	    var _this = _possibleConstructorReturn(this, (List.__proto__ || Object.getPrototypeOf(List)).call(this, props));
-	
-	    _this.listInfo = todoList;
-	    return _this;
+	    return _possibleConstructorReturn(this, (List.__proto__ || Object.getPrototypeOf(List)).call(this, props));
 	  }
 	
 	  _createClass(List, [{
-	    key: "addItemMethod",
-	    value: function addItemMethod(dict) {
-	      this.listInfo.unshift(dict);
-	    }
-	  }, {
 	    key: "render",
 	    value: function render() {
-	      var listTemplate;
-	      //changeItemMethod = this.state.changeItemMethod;
-	
-	      listTemplate = this.listInfo.map(function (item, index) {
-	        return _react2.default.createElement(
-	          "div",
-	          { key: index },
-	          _react2.default.createElement(_item2.default, { key: index, data: item, index: index })
-	        );
-	      });
 	
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "item-container" },
-	        _react2.default.createElement(
-	          "div",
-	          { id: "beforeFirstItem" },
-	          listTemplate
-	        )
+	        this.props.children
 	      );
 	    }
 	  }]);
@@ -21660,6 +21713,8 @@
 	
 	    var _this = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, props));
 	
+	    _this.onChangeReadiness = _this.onChangeReadiness.bind(_this);
+	    _this.onDelete = _this.onDelete.bind(_this);
 	    _this.state = {
 	      readiness: _this.props.readiness
 	    };
@@ -21667,6 +21722,18 @@
 	  }
 	
 	  _createClass(Item, [{
+	    key: "onChangeReadiness",
+	    value: function onChangeReadiness(event) {
+	      var val = event.target.checked;
+	      this.setState({ readiness: val });
+	      this.props.onItemChanged('edit', this.props.index, { property: 'readiness', value: val });
+	    }
+	  }, {
+	    key: "onDelete",
+	    value: function onDelete(event) {
+	      this.props.onItemChanged('delete', event.target.parentNode.id);
+	    }
+	  }, {
 	    key: "render",
 	    value: function render() {
 	      var text = this.props.data.text,
@@ -21682,16 +21749,22 @@
 	      return _react2.default.createElement(
 	        "div",
 	        { className: className, id: this.props.index },
-	        _react2.default.createElement("input", { className: "changeStateItem", type: "checkbox", checked: readiness, id: itemID }),
+	        _react2.default.createElement("input", {
+	          className: "changeStateItem",
+	          onChange: this.onChangeReadiness,
+	          type: "checkbox",
+	          checked: readiness,
+	          id: 'checkbox-' + this.props.index
+	        }),
 	        _react2.default.createElement(
 	          "label",
-	          { htmlFor: itemID },
+	          { htmlFor: 'checkbox-' + this.props.index },
 	          _react2.default.createElement("span", null)
 	        ),
-	        _react2.default.createElement("input", { className: "itemText", placeholder: text }),
+	        _react2.default.createElement("input", { className: "itemText", value: text }),
 	        _react2.default.createElement(
 	          "span",
-	          { className: "delete-btn" },
+	          { className: "delete-btn", onClick: this.onDelete },
 	          "X"
 	        )
 	      );
@@ -21742,7 +21815,9 @@
 	      return _react2.default.createElement(
 	        "label",
 	        null,
-	        _react2.default.createElement("input", { type: "radio", name: "toggle", value: this.props.value, onChange: this.props.onFilterChange, checked: this.props.value == this.props.currentFilter }),
+	        _react2.default.createElement("input", { type: "radio", name: "toggle", value: this.props.value,
+	          onChange: this.props.onFilterChange,
+	          checked: this.props.value == this.props.currentFilter }),
 	        _react2.default.createElement(
 	          "span",
 	          null,

@@ -46,7 +46,10 @@ html, body {
   text-decoration: line-through;
   color: lightgrey;
 }
-
+.todo-list__item.ready input {
+    color: #d9d9d9;
+    text-decoration: line-through;
+}
 .changeStateItem {
   width: 40px;
   height: 40px;
@@ -124,6 +127,7 @@ html, body {
 .filters label input[type="radio"] {
     display: none;
 }
+
 input[type=text],
 select,
 textarea {

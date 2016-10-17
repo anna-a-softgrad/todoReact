@@ -5,11 +5,23 @@ import {Component} from "react";
 class Item extends Component {
   constructor(props) {
     super(props);
-    
+    this.onChangeReadiness = this.onChangeReadiness.bind(this);
+    this.onDelete = this.onDelete.bind(this);
     this.state = {
       readiness: this.props.readiness
     };
   }
+
+  onChangeReadiness(event) {
+    var val = event.target.checked;
+    this.setState({readiness: val});
+    this.props.onItemChanged('edit', this.props.index, {property: 'readiness', value: val});
+  }
+
+  onDelete(event) {
+    this.props.onItemChanged('delete', event.target.parentNode.id);
+  }
+
   render() {
     var text      = this.props.data.text,
         readiness = this.props.data.readiness;
@@ -23,10 +35,16 @@ class Item extends Component {
 
     return (
       <div className={className} id={this.props.index} >
-        <input className="changeStateItem" type="checkbox" checked={readiness} id={itemID}/>
-        <label htmlFor={itemID}><span></span></label> 
-        <input className='itemText'placeholder={text}/>
-        <span className='delete-btn'>X</span>
+        <input 
+          className="changeStateItem" 
+          onChange={this.onChangeReadiness} 
+          type="checkbox" 
+          checked={readiness} 
+          id={'checkbox-' + this.props.index}
+        />
+        <label htmlFor={'checkbox-' + this.props.index} ><span></span></label> 
+        <input className='itemText' value={text}/>
+        <span className='delete-btn' onClick={this.onDelete} >X</span>
       </div>
     )
   }
