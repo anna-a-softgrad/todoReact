@@ -19,7 +19,7 @@ class Item extends Component {
   }
 
   onDelete(event) {
-    this.props.onItemChanged('delete', event.target.parentNode.id);
+    this.props.onItemChanged('delete', this.props.index);
   }
 
   render() {

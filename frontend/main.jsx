@@ -1,12 +1,24 @@
-import React from "react";
-import ReactDOM from 'react-dom';
-import {Component} from "react";
+import React from "react"
+import ReactDOM from 'react-dom'
+import { Component } from "react"
 
-import List from './list.jsx';
-import Item from "./item.jsx";
-import Filter from './filter.jsx';
+import List from './list.jsx'
+import Item from "./item.jsx"
+import Filter from './filter.jsx'
 
-import './style.css';
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import todoApp from './reducers/reducers.jsx'
+
+import './style.css'
+
+import { addTodo, toggleTodo, deleteTodo, setVisibilityFilter, VisibilityFilters } from './actions/actions.jsx'
+
+let store = createStore(todoApp);
+
+store.subscribe(() =>
+  console.log(store.getState())
+)
 
 class MainWindow extends Component {
 	constructor(props) {
@@ -18,6 +30,7 @@ class MainWindow extends Component {
     this.onChangeFilter = this.onChangeFilter.bind(this);
     this.readyAll = this.readyAll.bind(this);
 
+
     this.state = {      
       listInfo: [],
       readyAll: false,
@@ -25,13 +38,7 @@ class MainWindow extends Component {
       activeItems: 0
     };
 
-    this.list = [
-      {text: '1', readiness: false },
-      {text: '2', readiness: false },
-      {text: '3', readiness: false},
-      {text: '4', readiness: false}
-    ]
-
+    this.list = [];
 		this.onAdd = this.onAdd.bind(this);
 
 		this.filters = [
@@ -49,6 +56,7 @@ class MainWindow extends Component {
 	  var dict = {text: evt.target.value, readiness: false};
     evt.target.value = '';   
     this.list.unshift(dict);
+    store.dispatch(addTodo(dict.text)); // saving new object
 
     this.dispatchChangeEvent();
   }
@@ -56,12 +64,14 @@ class MainWindow extends Component {
   readyAll(evt) {
     for (var i = 0; i < this.list.length; i++) {
       this.list[i].readiness = !this.state.readyAll;
+      store.dispatch(toggleTodo(i)); 
     }
     this.readynessChange(!this.state.readyAll);
     this.dispatchChangeEvent();
   }
   
-  readynessChange(readyAll) {  
+  readynessChange(readyAll) {  // ???
+
     this.setState({  
       readyAll: readyAll  
     });  
@@ -71,9 +81,12 @@ class MainWindow extends Component {
     switch(event) {
       case 'delete':
         this.list.splice(id, 1);
+
+        store.dispatch(deleteTodo(id));
         break;
       case 'edit':
         this.list[id][prop.property] = prop.value;
+        store.dispatch(toggleTodo(id));
         break;
       default:
         return;
@@ -85,6 +98,7 @@ class MainWindow extends Component {
     for (var i = 0; i < this.list.length; i++) {
       if (this.list[i].readiness) {
         this.list.splice(i, 1);
+        store.dispatch(deleteTodo(i));
         i--;
       }
     }
@@ -92,6 +106,8 @@ class MainWindow extends Component {
   }
 
   onChangeFilter(evt) {
+    store.dispatch(setVisibilityFilter(evt.target.value));
+
     this.setState({
       filter: evt.target.value,
       listInfo: this.list
@@ -102,20 +118,35 @@ class MainWindow extends Component {
     this.setState({
       listInfo: this.list
     })
+
   }
 
   render() {
   	var activeItems = 0,
         listInfo = this.list;
 
-    for(var i = 0; i < listInfo.length; i++) {      
-      if(this.state.readyAll == true) {
-        listInfo[i].readiness = true
+    if (listInfo != undefined) {
+
+      for(var i = 0; i < listInfo.length; i++) {      
+        if(this.state.readyAll == true) {
+          listInfo[i].readiness = true
+        }
+
+        if (listInfo[i].readiness == false) {
+            activeItems++;    
+        }
       }
 
-      if (listInfo[i].readiness == false) {
-          activeItems++;    
-      }
+      var listTemplate = listInfo.map(function(item, index) {
+        if (this.state.filter < 0 && !item.readiness || this.state.filter > 0 && item.readiness)
+              return;
+
+        return (
+          <div key={index}>
+            <Item key={index} onItemChanged={this.onChildChanged} data={item} index={index}/>
+          </div>
+        )
+      }.bind(this))    
     }
 
   	var filters = this.filters.map(function(elem, index) {
@@ -124,17 +155,6 @@ class MainWindow extends Component {
         currentFilter={this.state.filter}/>;
       }.bind(this));
 
-    var listTemplate = listInfo.map(function(item, index) {
-      if (this.state.filter < 0 && !item.readiness || this.state.filter > 0 && item.readiness)
-            return;
-
-      return (
-        <div key={index}>
-          <Item key={index} onItemChanged={this.onChildChanged} data={item} index={index}/>
-        </div>
-      )
-    }.bind(this))
-  	
   	return (
 	    	<div className='wrapper'>
 	    		<div className='main-header flex-block'>
@@ -165,6 +185,9 @@ class MainWindow extends Component {
 };
 
 ReactDOM.render(
-  <MainWindow />,
+  <Provider store={store}>
+    <MainWindow />
+  </Provider>,
+
   document.getElementById('root')
 );
