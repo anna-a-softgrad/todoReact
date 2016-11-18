@@ -25,7 +25,6 @@ class Item extends Component {
   render() {
     var text      = this.props.data.text,
         readiness = this.props.data.readiness;
-    var itemID = 'checkbox-' + this.props.index;
 
     var className = 'todo-list__item flex-block';
 

@@ -8,6 +8,11 @@ import Filter from './filter.jsx'
 
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
+
+import AddTodo from './containers/AddTodo.jsx'
+import VisibleTodoList from './containers/VisibleTodoList.jsx'
+import Footer from './components/Footer.jsx'
+
 import todoApp from './reducers/reducers.jsx'
 
 import './style.css'
@@ -25,21 +30,15 @@ class MainWindow extends Component {
 		super(props);
 
     this.deleteCompleted = this.deleteCompleted.bind(this);
-    this.onChildChanged = this.onChildChanged.bind(this);
-    this.dispatchChangeEvent = this.dispatchChangeEvent.bind(this);
     this.onChangeFilter = this.onChangeFilter.bind(this);
     this.readyAll = this.readyAll.bind(this);
 
 
     this.state = {      
-      listInfo: [],
       readyAll: false,
       filter: 0,
       activeItems: 0
     };
-
-    this.list = [];
-		this.onAdd = this.onAdd.bind(this);
 
 		this.filters = [
 	    {text: "All", value: 0},
@@ -48,18 +47,6 @@ class MainWindow extends Component {
     ];
 }
 
-	onAdd(evt) {
-	  if (evt.keyCode != 13) {
-        return;
-      }
-      // add to List
-	  var dict = {text: evt.target.value, readiness: false};
-    evt.target.value = '';   
-    this.list.unshift(dict);
-    store.dispatch(addTodo(dict.text)); // saving new object
-
-    this.dispatchChangeEvent();
-  }
 
   readyAll(evt) {
     for (var i = 0; i < this.list.length; i++) {
@@ -77,22 +64,6 @@ class MainWindow extends Component {
     });  
   }
 
-  onChildChanged(event, id, prop) {
-    switch(event) {
-      case 'delete':
-        this.list.splice(id, 1);
-
-        store.dispatch(deleteTodo(id));
-        break;
-      case 'edit':
-        this.list[id][prop.property] = prop.value;
-        store.dispatch(toggleTodo(id));
-        break;
-      default:
-        return;
-    }
-    this.dispatchChangeEvent();
-  }
 
   deleteCompleted() {
     for (var i = 0; i < this.list.length; i++) {
@@ -122,32 +93,6 @@ class MainWindow extends Component {
   }
 
   render() {
-  	var activeItems = 0,
-        listInfo = this.list;
-
-    if (listInfo != undefined) {
-
-      for(var i = 0; i < listInfo.length; i++) {      
-        if(this.state.readyAll == true) {
-          listInfo[i].readiness = true
-        }
-
-        if (listInfo[i].readiness == false) {
-            activeItems++;    
-        }
-      }
-
-      var listTemplate = listInfo.map(function(item, index) {
-        if (this.state.filter < 0 && !item.readiness || this.state.filter > 0 && item.readiness)
-              return;
-
-        return (
-          <div key={index}>
-            <Item key={index} onItemChanged={this.onChildChanged} data={item} index={index}/>
-          </div>
-        )
-      }.bind(this))    
-    }
 
   	var filters = this.filters.map(function(elem, index) {
         return <Filter key={index} text={elem.text} value={elem.value} 
@@ -157,28 +102,9 @@ class MainWindow extends Component {
 
   	return (
 	    	<div className='wrapper'>
-	    		<div className='main-header flex-block'>
-            <input type="checkbox" className="changeStateItem" onClick={this.readyAll}/>
-            <input 
-            	className='todo-list__input' 
-            	type='text' 
-            	id='usertext' 
-            	ref='list'
-            	onKeyUp={this.onAdd}
-            	placeholder="What needs to be done?"/>            
-        	</div>
-
-          <List>
-            {listTemplate}
-          </List>
-
-	      	<div className='footer'>
-	      		<label>{activeItems} items left</label>
-          		<div className='filters'>
-          			{filters}
-          		</div>
-          		<button onClick={this.deleteCompleted}>Clear completed</button>
-        		</div>
+          <AddTodo />
+          <VisibleTodoList />
+          <Footer /> 
 	    	</div>
   	)
   }

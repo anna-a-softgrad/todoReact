@@ -72,11 +72,23 @@
 	
 	var _redux = __webpack_require__(182);
 	
-	var _reducers = __webpack_require__(199);
+	var _AddTodo = __webpack_require__(199);
+	
+	var _AddTodo2 = _interopRequireDefault(_AddTodo);
+	
+	var _VisibleTodoList = __webpack_require__(201);
+	
+	var _VisibleTodoList2 = _interopRequireDefault(_VisibleTodoList);
+	
+	var _Footer = __webpack_require__(209);
+	
+	var _Footer2 = _interopRequireDefault(_Footer);
+	
+	var _reducers = __webpack_require__(204);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	__webpack_require__(201);
+	__webpack_require__(205);
 	
 	var _actions = __webpack_require__(200);
 	
@@ -103,40 +115,20 @@
 	    var _this = _possibleConstructorReturn(this, (MainWindow.__proto__ || Object.getPrototypeOf(MainWindow)).call(this, props));
 	
 	    _this.deleteCompleted = _this.deleteCompleted.bind(_this);
-	    _this.onChildChanged = _this.onChildChanged.bind(_this);
-	    _this.dispatchChangeEvent = _this.dispatchChangeEvent.bind(_this);
 	    _this.onChangeFilter = _this.onChangeFilter.bind(_this);
 	    _this.readyAll = _this.readyAll.bind(_this);
 	
 	    _this.state = {
-	      listInfo: [],
 	      readyAll: false,
 	      filter: 0,
 	      activeItems: 0
 	    };
-	
-	    _this.list = [];
-	    _this.onAdd = _this.onAdd.bind(_this);
 	
 	    _this.filters = [{ text: "All", value: 0 }, { text: "Active", value: 1 }, { text: "Completed", value: -1 }];
 	    return _this;
 	  }
 	
 	  _createClass(MainWindow, [{
-	    key: "onAdd",
-	    value: function onAdd(evt) {
-	      if (evt.keyCode != 13) {
-	        return;
-	      }
-	      // add to List
-	      var dict = { text: evt.target.value, readiness: false };
-	      evt.target.value = '';
-	      this.list.unshift(dict);
-	      store.dispatch((0, _actions.addTodo)(dict.text)); // saving new object
-	
-	      this.dispatchChangeEvent();
-	    }
-	  }, {
 	    key: "readyAll",
 	    value: function readyAll(evt) {
 	      for (var i = 0; i < this.list.length; i++) {
@@ -154,24 +146,6 @@
 	      this.setState({
 	        readyAll: readyAll
 	      });
-	    }
-	  }, {
-	    key: "onChildChanged",
-	    value: function onChildChanged(event, id, prop) {
-	      switch (event) {
-	        case 'delete':
-	          this.list.splice(id, 1);
-	
-	          store.dispatch((0, _actions.deleteTodo)(id));
-	          break;
-	        case 'edit':
-	          this.list[id][prop.property] = prop.value;
-	          store.dispatch((0, _actions.toggleTodo)(id));
-	          break;
-	        default:
-	          return;
-	      }
-	      this.dispatchChangeEvent();
 	    }
 	  }, {
 	    key: "deleteCompleted",
@@ -205,31 +179,6 @@
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var activeItems = 0,
-	          listInfo = this.list;
-	
-	      if (listInfo != undefined) {
-	
-	        for (var i = 0; i < listInfo.length; i++) {
-	          if (this.state.readyAll == true) {
-	            listInfo[i].readiness = true;
-	          }
-	
-	          if (listInfo[i].readiness == false) {
-	            activeItems++;
-	          }
-	        }
-	
-	        var listTemplate = listInfo.map(function (item, index) {
-	          if (this.state.filter < 0 && !item.readiness || this.state.filter > 0 && item.readiness) return;
-	
-	          return _react2.default.createElement(
-	            "div",
-	            { key: index },
-	            _react2.default.createElement(_item2.default, { key: index, onItemChanged: this.onChildChanged, data: item, index: index })
-	          );
-	        }.bind(this));
-	      }
 	
 	      var filters = this.filters.map(function (elem, index) {
 	        return _react2.default.createElement(_filter2.default, { key: index, text: elem.text, value: elem.value,
@@ -240,43 +189,9 @@
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "wrapper" },
-	        _react2.default.createElement(
-	          "div",
-	          { className: "main-header flex-block" },
-	          _react2.default.createElement("input", { type: "checkbox", className: "changeStateItem", onClick: this.readyAll }),
-	          _react2.default.createElement("input", {
-	            className: "todo-list__input",
-	            type: "text",
-	            id: "usertext",
-	            ref: "list",
-	            onKeyUp: this.onAdd,
-	            placeholder: "What needs to be done?" })
-	        ),
-	        _react2.default.createElement(
-	          _list2.default,
-	          null,
-	          listTemplate
-	        ),
-	        _react2.default.createElement(
-	          "div",
-	          { className: "footer" },
-	          _react2.default.createElement(
-	            "label",
-	            null,
-	            activeItems,
-	            " items left"
-	          ),
-	          _react2.default.createElement(
-	            "div",
-	            { className: "filters" },
-	            filters
-	          ),
-	          _react2.default.createElement(
-	            "button",
-	            { onClick: this.deleteCompleted },
-	            "Clear completed"
-	          )
-	        )
+	        _react2.default.createElement(_AddTodo2.default, null),
+	        _react2.default.createElement(_VisibleTodoList2.default, null),
+	        _react2.default.createElement(_Footer2.default, null)
 	      );
 	    }
 	  }]);
@@ -21770,7 +21685,6 @@
 	    value: function render() {
 	      var text = this.props.data.text,
 	          readiness = this.props.data.readiness;
-	      var itemID = 'checkbox-' + this.props.index;
 	
 	      var className = 'todo-list__item flex-block';
 	
@@ -23472,6 +23386,310 @@
 	  value: true
 	});
 	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(175);
+	
+	var _actions = __webpack_require__(200);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AddTodo = function AddTodo(_ref) {
+	  var dispatch = _ref.dispatch;
+	
+	  var input = void 0;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'main-header flex-block' },
+	    _react2.default.createElement('input', { type: 'checkbox', className: 'changeStateItem',
+	      onClick: function onClick(e) {
+	        e.preventDefault();
+	        // ...
+	      } }),
+	    _react2.default.createElement('input', { ref: function ref(node) {
+	        input = node;
+	      },
+	      className: 'todo-list__input',
+	      type: 'text',
+	      id: 'usertext',
+	
+	      onKeyUp: function onKeyUp(e) {
+	        if (e.keyCode != 13) {
+	          return;
+	        }
+	        e.preventDefault();
+	        if (!input.value.trim()) {
+	          return;
+	        }
+	        dispatch((0, _actions.addTodo)(input.value));
+	        input.value = '';
+	      },
+	      placeholder: 'What needs to be done?' })
+	  );
+	};
+	AddTodo = (0, _reactRedux.connect)()(AddTodo);
+	
+	exports.default = AddTodo;
+
+/***/ },
+/* 200 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var ADD_TODO = exports.ADD_TODO = 'ADD_TODO';
+	var TOGGLE_TODO = exports.TOGGLE_TODO = 'TOGGLE_TODO';
+	var DELETE_TODO = exports.DELETE_TODO = 'DELETE_TODO';
+	var SET_VISIBILITY_FILTER = exports.SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER';
+	
+	var VisibilityFilters = exports.VisibilityFilters = {
+	  SHOW_ALL: 'SHOW_ALL',
+	  SHOW_COMPLETED: 'SHOW_COMPLETED',
+	  SHOW_ACTIVE: 'SHOW_ACTIVE'
+	};
+	
+	var nextTodoId = 0;
+	
+	var addTodo = exports.addTodo = function addTodo(text) {
+	  return {
+	    type: ADD_TODO,
+	    id: nextTodoId++,
+	    text: text
+	  };
+	};
+	
+	var textChangedTodo = exports.textChangedTodo = function textChangedTodo(id, text) {
+	  return {
+	    type: 'TEXT_CHANGED',
+	    id: id,
+	    text: text
+	  };
+	};
+	
+	var deleteTodo = exports.deleteTodo = function deleteTodo(id) {
+	  return {
+	    type: DELETE_TODO,
+	    id: id
+	  };
+	};
+	
+	var setVisibilityFilter = exports.setVisibilityFilter = function setVisibilityFilter(filter) {
+	  return {
+	    type: SET_VISIBILITY_FILTER,
+	    filter: filter
+	  };
+	};
+	
+	var toggleTodo = exports.toggleTodo = function toggleTodo(id) {
+	  return {
+	    type: TOGGLE_TODO,
+	    id: id
+	  };
+	};
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(175);
+	
+	var _actions = __webpack_require__(200);
+	
+	var _TodoList = __webpack_require__(202);
+	
+	var _TodoList2 = _interopRequireDefault(_TodoList);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var getVisibleTodos = function getVisibleTodos(todos, filter) {
+	  switch (filter) {
+	    case 'SHOW_ALL':
+	      return todos;
+	    case 'SHOW_COMPLETED':
+	      return todos.filter(function (t) {
+	        return t.completed;
+	      });
+	    case 'SHOW_ACTIVE':
+	      return todos.filter(function (t) {
+	        return !t.completed;
+	      });
+	  }
+	};
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    todos: getVisibleTodos(state.todos, state.visibilityFilter)
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    onTodoClick: function onTodoClick(id) {
+	      dispatch((0, _actions.toggleTodo)(id));
+	    },
+	    onTodoTextChanged: function onTodoTextChanged(id, text) {
+	      dispatch((0, _actions.textChangedTodo)(id, text));
+	    },
+	    onTodoDelete: function onTodoDelete(id) {
+	      dispatch((0, _actions.deleteTodo)(id));
+	    }
+	  };
+	};
+	
+	var VisibleTodoList = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_TodoList2.default);
+	
+	exports.default = VisibleTodoList;
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Todo = __webpack_require__(203);
+	
+	var _Todo2 = _interopRequireDefault(_Todo);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var TodoList = function TodoList(_ref) {
+	  var todos = _ref.todos;
+	  var onTodoClick = _ref.onTodoClick;
+	  var onTodoTextChanged = _ref.onTodoTextChanged;
+	  var onTodoDelete = _ref.onTodoDelete;
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'item-container' },
+	    todos.map(function (todo) {
+	      return _react2.default.createElement(
+	        'div',
+	        { key: todo.id },
+	        _react2.default.createElement(_Todo2.default, _extends({
+	          key: todo.id
+	        }, todo, {
+	          onReadynessChange: function onReadynessChange() {
+	            return onTodoClick(todo.id);
+	          },
+	          onTextChanged: function onTextChanged(event) {
+	            return onTodoTextChanged(todo.id, event.target.value);
+	          },
+	          onDelete: function onDelete() {
+	            return onTodoDelete(todo.id);
+	          }
+	        }))
+	      );
+	    })
+	  );
+	};
+	
+	TodoList.propTypes = {
+	  todos: _react.PropTypes.arrayOf(_react.PropTypes.shape({
+	    id: _react.PropTypes.number.isRequired,
+	    completed: _react.PropTypes.bool.isRequired,
+	    text: _react.PropTypes.string.isRequired
+	  }).isRequired).isRequired,
+	  onTodoClick: _react.PropTypes.func.isRequired,
+	  onTodoTextChanged: _react.PropTypes.func.isRequired,
+	  onTodoDelete: _react.PropTypes.func.isRequired
+	};
+	
+	exports.default = TodoList;
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Todo = function Todo(_ref) {
+	  var onReadynessChange = _ref.onReadynessChange;
+	  var onTextChanged = _ref.onTextChanged;
+	  var onDelete = _ref.onDelete;
+	  var completed = _ref.completed;
+	  var id = _ref.id;
+	  var text = _ref.text;
+	
+	  var readyClass = completed ? ' ready' : '';
+	  var input = void 0;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'todo-list__item flex-block' + readyClass,
+	      id: id },
+	    _react2.default.createElement('input', {
+	      className: 'changeStateItem',
+	      onChange: onReadynessChange,
+	      type: 'checkbox',
+	      checked: completed,
+	      id: 'checkbox-' + id
+	    }),
+	    _react2.default.createElement(
+	      'label',
+	      { htmlFor: 'checkbox-' + id },
+	      _react2.default.createElement('span', null)
+	    ),
+	    _react2.default.createElement('input', { className: 'itemText', value: text, onChange: onTextChanged }),
+	    _react2.default.createElement(
+	      'span',
+	      { className: 'delete-btn', onClick: onDelete
+	      },
+	      'X'
+	    )
+	  );
+	};
+	
+	Todo.propTypes = {
+	  onReadynessChange: _react.PropTypes.func.isRequired,
+	  onTextChanged: _react.PropTypes.func.isRequired,
+	  onDelete: _react.PropTypes.func.isRequired,
+	  completed: _react.PropTypes.bool.isRequired,
+	  text: _react.PropTypes.string.isRequired
+	};
+	
+	exports.default = Todo;
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
 	var _redux = __webpack_require__(182);
 	
 	var _actions = __webpack_require__(200);
@@ -23489,6 +23707,15 @@
 	        text: action.text,
 	        completed: false
 	      };
+	
+	    case 'TEXT_CHANGED':
+	      if (state.id !== action.id) {
+	        return state;
+	      }
+	      return Object.assign({}, state, {
+	        text: action.text
+	      });
+	
 	    case 'TOGGLE_TODO':
 	      if (state.id !== action.id) {
 	        return state;
@@ -23511,6 +23738,10 @@
 	    case 'ADD_TODO':
 	      return [].concat(_toConsumableArray(state), [todo(undefined, action)]);
 	    case 'TOGGLE_TODO':
+	      return state.map(function (t) {
+	        return todo(t, action);
+	      });
+	    case 'TEXT_CHANGED':
 	      return state.map(function (t) {
 	        return todo(t, action);
 	      });
@@ -23548,61 +23779,149 @@
 	exports.default = todoApp;
 
 /***/ },
-/* 200 */
+/* 205 */
 /***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var ADD_TODO = exports.ADD_TODO = 'ADD_TODO';
-	var TOGGLE_TODO = exports.TOGGLE_TODO = 'TOGGLE_TODO';
-	var DELETE_TODO = exports.DELETE_TODO = 'DELETE_TODO';
-	var SET_VISIBILITY_FILTER = exports.SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER';
 	
-	var VisibilityFilters = exports.VisibilityFilters = {
-	  SHOW_ALL: 'SHOW_ALL',
-	  SHOW_COMPLETED: 'SHOW_COMPLETED',
-	  SHOW_ACTIVE: 'SHOW_ACTIVE'
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _FilterLink = __webpack_require__(210);
+	
+	var _FilterLink2 = _interopRequireDefault(_FilterLink);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Footer = function Footer() {
+	  return _react2.default.createElement(
+	    'p',
+	    null,
+	    'Show:',
+	    " ",
+	    _react2.default.createElement(
+	      _FilterLink2.default,
+	      { filter: 'SHOW_ALL' },
+	      'All'
+	    ),
+	    ", ",
+	    _react2.default.createElement(
+	      _FilterLink2.default,
+	      { filter: 'SHOW_ACTIVE' },
+	      'Active'
+	    ),
+	    ", ",
+	    _react2.default.createElement(
+	      _FilterLink2.default,
+	      { filter: 'SHOW_COMPLETED' },
+	      'Completed'
+	    )
+	  );
 	};
 	
-	var nextTodoId = 0;
-	
-	var addTodo = exports.addTodo = function addTodo(text) {
-	  return {
-	    type: ADD_TODO,
-	    id: nextTodoId++,
-	    text: text
-	  };
-	};
-	
-	var deleteTodo = exports.deleteTodo = function deleteTodo(id) {
-	  return {
-	    type: DELETE_TODO,
-	    id: id
-	  };
-	};
-	
-	var setVisibilityFilter = exports.setVisibilityFilter = function setVisibilityFilter(filter) {
-	  return {
-	    type: SET_VISIBILITY_FILTER,
-	    filter: filter
-	  };
-	};
-	
-	var toggleTodo = exports.toggleTodo = function toggleTodo(id) {
-	  return {
-	    type: TOGGLE_TODO,
-	    id: id
-	  };
-	};
+	exports.default = Footer;
 
 /***/ },
-/* 201 */
-/***/ function(module, exports) {
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
 
-	// removed by extract-text-webpack-plugin
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(175);
+	
+	var _actions = __webpack_require__(200);
+	
+	var _Link = __webpack_require__(212);
+	
+	var _Link2 = _interopRequireDefault(_Link);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	  return {
+	    active: ownProps.filter === state.visibilityFilter
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    onClick: function onClick() {
+	      dispatch((0, _actions.setVisibilityFilter)(ownProps.filter));
+	    }
+	  };
+	};
+	
+	var FilterLink = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Link2.default);
+	
+	exports.default = FilterLink;
+
+/***/ },
+/* 211 */,
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Link = function Link(_ref) {
+	  var active = _ref.active;
+	  var children = _ref.children;
+	  var _onClick = _ref.onClick;
+	
+	  if (active) {
+	    return _react2.default.createElement(
+	      "span",
+	      null,
+	      children
+	    );
+	  }
+	
+	  return _react2.default.createElement(
+	    "a",
+	    { href: "#",
+	      onClick: function onClick(e) {
+	        e.preventDefault();
+	        _onClick();
+	      }
+	    },
+	    children
+	  );
+	};
+	
+	Link.propTypes = {
+	  active: _react.PropTypes.bool.isRequired,
+	  children: _react.PropTypes.node.isRequired,
+	  onClick: _react.PropTypes.func.isRequired
+	};
+	
+	exports.default = Link;
 
 /***/ }
 /******/ ]);
