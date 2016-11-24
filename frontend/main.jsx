@@ -30,21 +30,11 @@ class MainWindow extends Component {
 		super(props);
 
     this.deleteCompleted = this.deleteCompleted.bind(this);
-    this.onChangeFilter = this.onChangeFilter.bind(this);
     this.readyAll = this.readyAll.bind(this);
 
-
     this.state = {      
-      readyAll: false,
-      filter: 0,
       activeItems: 0
     };
-
-		this.filters = [
-	    {text: "All", value: 0},
-	    {text: "Active", value: 1},
-	    {text: "Completed", value: -1}
-    ];
 }
 
 
@@ -76,31 +66,8 @@ class MainWindow extends Component {
     this.dispatchChangeEvent();
   }
 
-  onChangeFilter(evt) {
-    store.dispatch(setVisibilityFilter(evt.target.value));
-
-    this.setState({
-      filter: evt.target.value,
-      listInfo: this.list
-    })
-  }
-
-  dispatchChangeEvent() {
-    this.setState({
-      listInfo: this.list
-    })
-
-  }
-
   render() {
-
-  	var filters = this.filters.map(function(elem, index) {
-        return <Filter key={index} text={elem.text} value={elem.value} 
-        onFilterChange={this.onChangeFilter}
-        currentFilter={this.state.filter}/>;
-      }.bind(this));
-
-  	return (
+    return (
 	    	<div className='wrapper'>
           <AddTodo />
           <VisibleTodoList />

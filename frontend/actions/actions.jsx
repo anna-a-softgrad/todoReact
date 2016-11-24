@@ -1,6 +1,9 @@
 export const ADD_TODO = 'ADD_TODO'
 export const TOGGLE_TODO = 'TOGGLE_TODO'
+export const CHECK_ALL = 'CHECK_ALL'
 export const DELETE_TODO = 'DELETE_TODO'
+export const DELETE_COMPLETED = 'DELETE_COMPLETED'
+export const TEXT_CHANGED = 'TEXT_CHANGED'
 export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
 
 export const VisibilityFilters = {
@@ -19,9 +22,23 @@ export const addTodo = (text) => {
   }
 }
 
+export const toggleTodo = (id) => {
+  return {
+    type: TOGGLE_TODO,
+    id
+  }
+}
+
+export const checkAllTodos = (checkedAll) => {
+  return {
+    type: CHECK_ALL,
+    checkedAll
+  }
+}
+
 export const textChangedTodo = (id, text) => {
   return {
-    type: 'TEXT_CHANGED',
+    type: TEXT_CHANGED,
     id,
     text
   }
@@ -34,16 +51,15 @@ export const deleteTodo = (id) => {
   }
 }
 
+export const deleteCompleted = () => {
+  return {
+    type: DELETE_COMPLETED
+  }
+}
+
 export const setVisibilityFilter = (filter) => {
   return {
     type: SET_VISIBILITY_FILTER,
     filter
-  }
-}
-
-export const toggleTodo = (id) => {
-  return {
-    type: TOGGLE_TODO,
-    id
   }
 }

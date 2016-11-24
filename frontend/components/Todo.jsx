@@ -4,7 +4,8 @@ const Todo = ({ onReadynessChange, onTextChanged, onDelete, completed, id, text 
   const readyClass = completed ? ' ready' : '';
   let input;
 
-  return (<div className={'todo-list__item flex-block' + readyClass} 
+  return (
+    <div className={'todo-list__item flex-block' + readyClass} 
     id={id} >
     <input 
       className="changeStateItem" 
@@ -15,8 +16,7 @@ const Todo = ({ onReadynessChange, onTextChanged, onDelete, completed, id, text 
     />
     <label htmlFor={'checkbox-' + id} ><span></span></label> 
     <input className='itemText' value={text} onChange={onTextChanged}/>
-    <span className='delete-btn' onClick={onDelete} 
-    >X</span>
+    <span className='delete-btn' onClick={onDelete}>X</span>
   </div>)
 }
 

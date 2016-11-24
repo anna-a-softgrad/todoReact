@@ -1,16 +1,16 @@
 import React, { PropTypes } from 'react'
 import Todo from './Todo.jsx'
 
-const TodoList = ({ todos, onTodoClick, onTodoTextChanged, onTodoDelete }) => (
+const TodoList = ({ todozz, onTodoClick, onTodoTextChanged, onTodoDelete }) => (
   <div className='item-container'>
-    {todos.map(todo =>
+    {todozz.map(todo =>
       <div key={todo.id}>
         <Todo
           key={todo.id}
           {...todo}
           onReadynessChange={() => onTodoClick(todo.id)}
           onTextChanged={(event) => onTodoTextChanged(todo.id, event.target.value)}
-          onDelete={() => onTodoDelete(todo.id)}          
+          onDelete={() => onTodoDelete(todo.id)}
         />
       </div>
     )}
@@ -18,7 +18,7 @@ const TodoList = ({ todos, onTodoClick, onTodoTextChanged, onTodoDelete }) => (
 )
 
 TodoList.propTypes = {
-  todos: PropTypes.arrayOf(PropTypes.shape({
+  todozz: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number.isRequired,
     completed: PropTypes.bool.isRequired,
     text: PropTypes.string.isRequired

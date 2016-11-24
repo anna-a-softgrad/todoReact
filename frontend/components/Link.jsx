@@ -1,19 +1,13 @@
 import React, { PropTypes } from 'react'
 
 const Link = ({ active, children, onClick }) => {
-  if (active) {
-    return <span>{children}</span>
-  }
-
   return (
-    <a href="#"
-       onClick={e => {
-         e.preventDefault()
-         onClick()
-       }}
-    >
-      {children}
-    </a>
+    <label>
+      <input type="radio" name="toggle" 
+      onChange={onClick} 
+      checked={active}/>
+      <span>{children}</span>
+    </label>
   )
 }
 

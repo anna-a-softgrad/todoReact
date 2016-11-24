@@ -80,15 +80,15 @@
 	
 	var _VisibleTodoList2 = _interopRequireDefault(_VisibleTodoList);
 	
-	var _Footer = __webpack_require__(209);
+	var _Footer = __webpack_require__(204);
 	
 	var _Footer2 = _interopRequireDefault(_Footer);
 	
-	var _reducers = __webpack_require__(204);
+	var _reducers = __webpack_require__(205);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	__webpack_require__(205);
+	__webpack_require__(206);
 	
 	var _actions = __webpack_require__(200);
 	
@@ -115,16 +115,11 @@
 	    var _this = _possibleConstructorReturn(this, (MainWindow.__proto__ || Object.getPrototypeOf(MainWindow)).call(this, props));
 	
 	    _this.deleteCompleted = _this.deleteCompleted.bind(_this);
-	    _this.onChangeFilter = _this.onChangeFilter.bind(_this);
 	    _this.readyAll = _this.readyAll.bind(_this);
 	
 	    _this.state = {
-	      readyAll: false,
-	      filter: 0,
 	      activeItems: 0
 	    };
-	
-	    _this.filters = [{ text: "All", value: 0 }, { text: "Active", value: 1 }, { text: "Completed", value: -1 }];
 	    return _this;
 	  }
 	
@@ -160,32 +155,8 @@
 	      this.dispatchChangeEvent();
 	    }
 	  }, {
-	    key: "onChangeFilter",
-	    value: function onChangeFilter(evt) {
-	      store.dispatch((0, _actions.setVisibilityFilter)(evt.target.value));
-	
-	      this.setState({
-	        filter: evt.target.value,
-	        listInfo: this.list
-	      });
-	    }
-	  }, {
-	    key: "dispatchChangeEvent",
-	    value: function dispatchChangeEvent() {
-	      this.setState({
-	        listInfo: this.list
-	      });
-	    }
-	  }, {
 	    key: "render",
 	    value: function render() {
-	
-	      var filters = this.filters.map(function (elem, index) {
-	        return _react2.default.createElement(_filter2.default, { key: index, text: elem.text, value: elem.value,
-	          onFilterChange: this.onChangeFilter,
-	          currentFilter: this.state.filter });
-	      }.bind(this));
-	
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "wrapper" },
@@ -23386,51 +23357,21 @@
 	  value: true
 	});
 	
-	var _react = __webpack_require__(1);
+	var _Header = __webpack_require__(212);
 	
-	var _react2 = _interopRequireDefault(_react);
+	var _Header2 = _interopRequireDefault(_Header);
 	
 	var _reactRedux = __webpack_require__(175);
 	
-	var _actions = __webpack_require__(200);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var AddTodo = function AddTodo(_ref) {
-	  var dispatch = _ref.dispatch;
-	
-	  var input = void 0;
-	
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'main-header flex-block' },
-	    _react2.default.createElement('input', { type: 'checkbox', className: 'changeStateItem',
-	      onClick: function onClick(e) {
-	        e.preventDefault();
-	        // ...
-	      } }),
-	    _react2.default.createElement('input', { ref: function ref(node) {
-	        input = node;
-	      },
-	      className: 'todo-list__input',
-	      type: 'text',
-	      id: 'usertext',
-	
-	      onKeyUp: function onKeyUp(e) {
-	        if (e.keyCode != 13) {
-	          return;
-	        }
-	        e.preventDefault();
-	        if (!input.value.trim()) {
-	          return;
-	        }
-	        dispatch((0, _actions.addTodo)(input.value));
-	        input.value = '';
-	      },
-	      placeholder: 'What needs to be done?' })
-	  );
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    checkAll: state.isCheckedAll
+	  };
 	};
-	AddTodo = (0, _reactRedux.connect)()(AddTodo);
+	
+	var AddTodo = (0, _reactRedux.connect)(mapStateToProps)(_Header2.default);
 	
 	exports.default = AddTodo;
 
@@ -23445,7 +23386,10 @@
 	});
 	var ADD_TODO = exports.ADD_TODO = 'ADD_TODO';
 	var TOGGLE_TODO = exports.TOGGLE_TODO = 'TOGGLE_TODO';
+	var CHECK_ALL = exports.CHECK_ALL = 'CHECK_ALL';
 	var DELETE_TODO = exports.DELETE_TODO = 'DELETE_TODO';
+	var DELETE_COMPLETED = exports.DELETE_COMPLETED = 'DELETE_COMPLETED';
+	var TEXT_CHANGED = exports.TEXT_CHANGED = 'TEXT_CHANGED';
 	var SET_VISIBILITY_FILTER = exports.SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER';
 	
 	var VisibilityFilters = exports.VisibilityFilters = {
@@ -23464,9 +23408,23 @@
 	  };
 	};
 	
+	var toggleTodo = exports.toggleTodo = function toggleTodo(id) {
+	  return {
+	    type: TOGGLE_TODO,
+	    id: id
+	  };
+	};
+	
+	var checkAllTodos = exports.checkAllTodos = function checkAllTodos(checkedAll) {
+	  return {
+	    type: CHECK_ALL,
+	    checkedAll: checkedAll
+	  };
+	};
+	
 	var textChangedTodo = exports.textChangedTodo = function textChangedTodo(id, text) {
 	  return {
-	    type: 'TEXT_CHANGED',
+	    type: TEXT_CHANGED,
 	    id: id,
 	    text: text
 	  };
@@ -23479,17 +23437,16 @@
 	  };
 	};
 	
+	var deleteCompleted = exports.deleteCompleted = function deleteCompleted() {
+	  return {
+	    type: DELETE_COMPLETED
+	  };
+	};
+	
 	var setVisibilityFilter = exports.setVisibilityFilter = function setVisibilityFilter(filter) {
 	  return {
 	    type: SET_VISIBILITY_FILTER,
 	    filter: filter
-	  };
-	};
-	
-	var toggleTodo = exports.toggleTodo = function toggleTodo(id) {
-	  return {
-	    type: TOGGLE_TODO,
-	    id: id
 	  };
 	};
 
@@ -23530,7 +23487,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    todos: getVisibleTodos(state.todos, state.visibilityFilter)
+	    todozz: getVisibleTodos(state.todos, state.visibilityFilter)
 	  };
 	};
 	
@@ -23575,14 +23532,14 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var TodoList = function TodoList(_ref) {
-	  var todos = _ref.todos;
+	  var todozz = _ref.todozz;
 	  var onTodoClick = _ref.onTodoClick;
 	  var onTodoTextChanged = _ref.onTodoTextChanged;
 	  var onTodoDelete = _ref.onTodoDelete;
 	  return _react2.default.createElement(
 	    'div',
 	    { className: 'item-container' },
-	    todos.map(function (todo) {
+	    todozz.map(function (todo) {
 	      return _react2.default.createElement(
 	        'div',
 	        { key: todo.id },
@@ -23605,7 +23562,7 @@
 	};
 	
 	TodoList.propTypes = {
-	  todos: _react.PropTypes.arrayOf(_react.PropTypes.shape({
+	  todozz: _react.PropTypes.arrayOf(_react.PropTypes.shape({
 	    id: _react.PropTypes.number.isRequired,
 	    completed: _react.PropTypes.bool.isRequired,
 	    text: _react.PropTypes.string.isRequired
@@ -23663,8 +23620,7 @@
 	    _react2.default.createElement('input', { className: 'itemText', value: text, onChange: onTextChanged }),
 	    _react2.default.createElement(
 	      'span',
-	      { className: 'delete-btn', onClick: onDelete
-	      },
+	      { className: 'delete-btn', onClick: onDelete },
 	      'X'
 	    )
 	  );
@@ -23690,6 +23646,80 @@
 	  value: true
 	});
 	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(175);
+	
+	var _reducers = __webpack_require__(205);
+	
+	var _actions = __webpack_require__(200);
+	
+	var _FilterLink = __webpack_require__(210);
+	
+	var _FilterLink2 = _interopRequireDefault(_FilterLink);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Footer = function Footer(_ref) {
+	  var dispatch = _ref.dispatch;
+	
+	  console.log(_reducers.activeItems);
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'footer' },
+	    _react2.default.createElement(
+	      'label',
+	      null,
+	      _reducers.activeItems,
+	      ' items left'
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'filters' },
+	      _react2.default.createElement(
+	        _FilterLink2.default,
+	        { filter: 'SHOW_ALL' },
+	        'All'
+	      ),
+	      _react2.default.createElement(
+	        _FilterLink2.default,
+	        { filter: 'SHOW_ACTIVE' },
+	        'Active'
+	      ),
+	      _react2.default.createElement(
+	        _FilterLink2.default,
+	        { filter: 'SHOW_COMPLETED' },
+	        'Completed'
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'button',
+	      { onClick: function onClick() {
+	          dispatch((0, _actions.deleteCompleted)());
+	        } },
+	      'Clear completed'
+	    )
+	  );
+	};
+	
+	Footer = (0, _reactRedux.connect)()(Footer);
+	
+	exports.default = Footer;
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.aciveItems = undefined;
+	
 	var _redux = __webpack_require__(182);
 	
 	var _actions = __webpack_require__(200);
@@ -23697,11 +23727,13 @@
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	var SHOW_ALL = _actions.VisibilityFilters.SHOW_ALL;
-	
+	var aciveItems = exports.aciveItems = 0;
 	
 	var todo = function todo(state, action) {
 	  switch (action.type) {
 	    case 'ADD_TODO':
+	      exports.aciveItems = aciveItems += 1;
+	
 	      return {
 	        id: action.id,
 	        text: action.text,
@@ -23712,6 +23744,7 @@
 	      if (state.id !== action.id) {
 	        return state;
 	      }
+	      exports.aciveItems = aciveItems += 1;
 	      return Object.assign({}, state, {
 	        text: action.text
 	      });
@@ -23720,13 +23753,10 @@
 	      if (state.id !== action.id) {
 	        return state;
 	      }
+	      exports.aciveItems = aciveItems += 1;
 	      return Object.assign({}, state, {
 	        completed: !state.completed
 	      });
-	    case 'DELETE_TODO':
-	      if (state.id !== action.id) {
-	        return state;
-	      }
 	  }
 	};
 	
@@ -23736,24 +23766,56 @@
 	
 	  switch (action.type) {
 	    case 'ADD_TODO':
+	      exports.aciveItems = aciveItems = 0;
 	      return [].concat(_toConsumableArray(state), [todo(undefined, action)]);
+	
 	    case 'TOGGLE_TODO':
+	      exports.aciveItems = aciveItems = 0;
 	      return state.map(function (t) {
 	        return todo(t, action);
 	      });
+	
 	    case 'TEXT_CHANGED':
+	      exports.aciveItems = aciveItems = 0;
 	      return state.map(function (t) {
 	        return todo(t, action);
 	      });
+	    case 'CHECK_ALL':
+	      var tempState = [];
+	      exports.aciveItems = aciveItems = 0;
+	
+	      for (var i = 0; i < state.length; i++) {
+	        tempState[i] = Object.assign({}, state[i], {
+	          completed: !state[i].completed
+	        });
+	      }
+	      return tempState;
+	
 	    case 'DELETE_TODO':
 	      var tempState = [];
 	      var counter = 0;
+	      exports.aciveItems = aciveItems = 0;
+	
 	      for (var i = 0; i < state.length; i++) {
 	        if (state[i].id !== action.id) {
+	          exports.aciveItems = aciveItems += 1;
 	          tempState[counter++] = Object.assign({}, state[i]);
 	        }
 	      }
 	      return tempState;
+	
+	    case 'DELETE_COMPLETED':
+	      var tempState = [];
+	      var counter = 0;
+	      exports.aciveItems = aciveItems = 0;
+	      for (var i = 0; i < state.length; i++) {
+	        if (state[i].completed != true) {
+	          exports.aciveItems = aciveItems += 1;
+	          tempState[counter++] = Object.assign({}, state[i]);
+	        }
+	      }
+	      return tempState;
+	
 	    default:
 	      return state;
 	  }
@@ -23770,72 +23832,36 @@
 	      return state;
 	  }
 	};
+	var isCheckedAll = function isCheckedAll() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case _actions.CHECK_ALL:
+	      return action.checkedAll;
+	    default:
+	      return state;
+	  }
+	};
 	
 	var todoApp = (0, _redux.combineReducers)({
 	  visibilityFilter: visibilityFilter,
+	  isCheckedAll: isCheckedAll,
 	  todos: todos
 	});
 	
 	exports.default = todoApp;
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 206 */,
 /* 207 */,
 /* 208 */,
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _FilterLink = __webpack_require__(210);
-	
-	var _FilterLink2 = _interopRequireDefault(_FilterLink);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var Footer = function Footer() {
-	  return _react2.default.createElement(
-	    'p',
-	    null,
-	    'Show:',
-	    " ",
-	    _react2.default.createElement(
-	      _FilterLink2.default,
-	      { filter: 'SHOW_ALL' },
-	      'All'
-	    ),
-	    ", ",
-	    _react2.default.createElement(
-	      _FilterLink2.default,
-	      { filter: 'SHOW_ACTIVE' },
-	      'Active'
-	    ),
-	    ", ",
-	    _react2.default.createElement(
-	      _FilterLink2.default,
-	      { filter: 'SHOW_COMPLETED' },
-	      'Completed'
-	    )
-	  );
-	};
-	
-	exports.default = Footer;
-
-/***/ },
+/* 209 */,
 /* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -23849,7 +23875,7 @@
 	
 	var _actions = __webpack_require__(200);
 	
-	var _Link = __webpack_require__(212);
+	var _Link = __webpack_require__(211);
 	
 	var _Link2 = _interopRequireDefault(_Link);
 	
@@ -23874,8 +23900,7 @@
 	exports.default = FilterLink;
 
 /***/ },
-/* 211 */,
-/* 212 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -23893,25 +23918,19 @@
 	var Link = function Link(_ref) {
 	  var active = _ref.active;
 	  var children = _ref.children;
-	  var _onClick = _ref.onClick;
+	  var onClick = _ref.onClick;
 	
-	  if (active) {
-	    return _react2.default.createElement(
+	  return _react2.default.createElement(
+	    "label",
+	    null,
+	    _react2.default.createElement("input", { type: "radio", name: "toggle",
+	      onChange: onClick,
+	      checked: active }),
+	    _react2.default.createElement(
 	      "span",
 	      null,
 	      children
-	    );
-	  }
-	
-	  return _react2.default.createElement(
-	    "a",
-	    { href: "#",
-	      onClick: function onClick(e) {
-	        e.preventDefault();
-	        _onClick();
-	      }
-	    },
-	    children
+	    )
 	  );
 	};
 	
@@ -23922,6 +23941,70 @@
 	};
 	
 	exports.default = Link;
+
+/***/ },
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _actions = __webpack_require__(200);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Header = function Header(_ref) {
+	  var dispatch = _ref.dispatch;
+	  var checkAll = _ref.checkAll;
+	
+	  var input = void 0;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'main-header flex-block' },
+	    _react2.default.createElement('input', {
+	      type: 'checkbox',
+	      className: 'changeStateItem',
+	      onChange: function onChange(e) {
+	        e.preventDefault();
+	        dispatch((0, _actions.checkAllTodos)(true));
+	      },
+	      checked: checkAll
+	    }),
+	    _react2.default.createElement('input', { ref: function ref(node) {
+	        input = node;
+	      },
+	      className: 'todo-list__input',
+	      type: 'text',
+	      id: 'usertext',
+	
+	      onKeyUp: function onKeyUp(e) {
+	        if (e.keyCode != 13) {
+	          return;
+	        }
+	        e.preventDefault();
+	        if (!input.value.trim()) {
+	          return;
+	        }
+	        dispatch((0, _actions.addTodo)(input.value));
+	        input.value = '';
+	      },
+	      placeholder: 'What needs to be done?' })
+	  );
+	};
+	
+	Header.propTypes = {
+	  checkAll: _react.PropTypes.bool.isRequired
+	};
+	
+	exports.default = Header;
 
 /***/ }
 /******/ ]);
